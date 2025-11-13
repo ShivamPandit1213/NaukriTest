@@ -1,4 +1,4 @@
-package nokrijob;
+package nokrijob.apply;
 
 import java.time.Duration;
 import java.util.List;
