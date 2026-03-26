@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2026-03-26T15:10:43 IST" name="Default suite" finished-at="2026-03-26T15:11:06 IST" duration-ms="23192">
+    <groups>
+    </groups>
+    <test started-at="2026-03-26T15:10:43 IST" name="Default test" finished-at="2026-03-26T15:11:06 IST" duration-ms="23192">
+      <class name="launch.Launch">
+        <test-method is-config="true" signature="launchByBrowserName(java.lang.String)[pri:0, instance:launch.Launch@4a94ee4]" started-at="2026-03-26T15:10:43 IST" name="launchByBrowserName" finished-at="2026-03-26T15:10:50 IST" duration-ms="6956" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[chrome]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- launchByBrowserName -->
+        <test-method signature="test1()[pri:0, instance:launch.Launch@4a94ee4]" started-at="2026-03-26T15:10:50 IST" name="test1" finished-at="2026-03-26T15:11:06 IST" duration-ms="16169" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test1 -->
+        <test-method is-config="true" signature="exitBrowser()[pri:0, instance:launch.Launch@4a94ee4]" started-at="2026-03-26T15:11:06 IST" name="exitBrowser" finished-at="2026-03-26T15:11:06 IST" duration-ms="1" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- exitBrowser -->
+      </class> <!-- launch.Launch -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>
