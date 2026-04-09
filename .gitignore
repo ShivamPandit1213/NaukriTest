@@ -1,36 +1,23 @@
-/target/
+# --- Maven & TestNG Output ---
+target/
 test-output/
+bin/
 *.log
 *.class
 
-# TestNG Reports
-test-output/
+# --- Screenshots (Crucial for Repo Size) ---
+src/test/resources/screenshots/
 
-# Driver files
-*.exe
-
-# Logs
-*.log
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Ignore TestNG and Maven output
-/test-output/
-/target/
-
-# Ignore IDE specific files
+# --- IDE Specific (Eclipse/IntelliJ) ---
 .settings/
 .classpath
 .project
 .metadata/
-bin/
+.idea/
+*.iml
 
-# Ignore temporary browser profiles
+# --- System & Temporary Files ---
 /temp/
-
-/bin/
-.settings/
-.classpath
-.project
+.DS_Store
+Thumbs.db
+*.exe
