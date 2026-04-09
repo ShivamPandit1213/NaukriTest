@@ -29,3 +29,8 @@ bin/
 
 # Ignore temporary browser profiles
 /temp/
+
+/bin/
+.settings/
+.classpath
+.project

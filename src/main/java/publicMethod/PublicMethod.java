@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+<<<<<<< HEAD
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -16,10 +17,14 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+=======
+import org.openqa.selenium.*;
+>>>>>>> 9da8f978834d8a72df51ff5d142f17babef96433
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+<<<<<<< HEAD
 import launch.Launch;
 
 public class PublicMethod {
@@ -36,6 +41,12 @@ public class PublicMethod {
 
 	// ===== SCREENSHOT =====
 	public File getScreenshot() throws IOException {
+=======
+public class PublicMethod {
+
+	// ===== SCREENSHOT =====
+	public static File getScreenshot(WebDriver driver) throws IOException {
+>>>>>>> 9da8f978834d8a72df51ff5d142f17babef96433
 		File screenshotDir = new File("src/test/resources/screenshots");
 		if (!screenshotDir.exists()) {
 			screenshotDir.mkdirs();
@@ -47,6 +58,7 @@ public class PublicMethod {
 		File destination = new File(screenshotDir, "Screenshot_" + timestamp + ".png");
 		FileUtils.copyFile(source, destination);
 
+<<<<<<< HEAD
 		System.out.println("\n📸 Screenshot captured: " + destination.getAbsolutePath());
 		return destination;
 	}
@@ -92,10 +104,29 @@ public class PublicMethod {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(locator)));
 		// System.out.println("✅ Element clickable: " + locator);
+=======
+		System.out.println("📸 Screenshot captured: " + destination.getAbsolutePath());
+		return destination;
+	}
+
+	// ===== WAIT METHODS =====
+	public static WebElement waitForElementVisible(WebDriver driver, String locator) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(locator)));
+		System.out.println("👁️ Element visible: " + locator);
+		return element;
+	}
+
+	public static WebElement waitUntilElementClickable(WebDriver driver, String locator) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(locator)));
+		System.out.println("✅ Element clickable: " + locator);
+>>>>>>> 9da8f978834d8a72df51ff5d142f17babef96433
 		return element;
 	}
 
 	// ===== BASIC ACTIONS =====
+<<<<<<< HEAD
 	public void click(String locator) throws IOException {
 		WebElement element = waitUntilElementClickable(locator);
 		element.click();
@@ -110,6 +141,22 @@ public class PublicMethod {
 	}
 
 	public String getText(String locator) {
+=======
+	public static void click(WebDriver driver, String locator) throws IOException {
+		WebElement element = waitUntilElementClickable(driver, locator);
+		element.click();
+		getScreenshot(driver);
+		System.out.println("🖱️ Clicked element: " + locator);
+	}
+
+	public static void moveToElement(WebDriver driver, WebElement element) {
+		Actions actions = new Actions(driver);
+		actions.moveToElement(element).perform();
+		System.out.println("➡️ Moved to element: " + element);
+	}
+
+	public static String getText(WebDriver driver, String locator) {
+>>>>>>> 9da8f978834d8a72df51ff5d142f17babef96433
 		WebElement element = driver.findElement(By.xpath(locator));
 		String text = element.getText();
 		System.out.println("📄 Text from element: " + text);
@@ -117,6 +164,7 @@ public class PublicMethod {
 	}
 
 	// ===== SLIDER HANDLER =====
+<<<<<<< HEAD
 	public void handleSlider(String locator, int slidePixel) throws Throwable {
 		WebElement slider = waitForElementVisible(locator);
 		Actions action = new Actions(driver);
@@ -127,16 +175,45 @@ public class PublicMethod {
 
 	// ===== WINDOW HANDLING =====
 	public String getParentWindow() {
+=======
+	public static void handleSlider(WebDriver driver, String locator, int slidePixel) throws Exception {
+		WebElement slider = waitForElementVisible(driver, locator);
+		Actions action = new Actions(driver);
+		action.clickAndHold(slider).moveByOffset(slidePixel, 0).release().perform();
+		getScreenshot(driver);
+		System.out.println("🎚️ Slider moved by " + slidePixel + " pixels.");
+	}
+
+	// ===== WINDOW HANDLING =====
+	public static String getParentWindow(WebDriver driver) {
+>>>>>>> 9da8f978834d8a72df51ff5d142f17babef96433
 		String parent = driver.getWindowHandle();
 		System.out.println("🪟 Parent window handle: " + parent);
 		return parent;
 	}
 
+<<<<<<< HEAD
 	public void switchBackToParent(String parentWindow) {
+=======
+	public static void switchToChildWindow(WebDriver driver, String parentWindow) {
+		Set<String> allWindows = driver.getWindowHandles();
+		for (String window : allWindows) {
+			if (!window.equals(parentWindow)) {
+				driver.switchTo().window(window);
+				System.out.println("🔄 Switched to child window: " + driver.getTitle());
+				return;
+			}
+		}
+		System.err.println("⚠️ No child window found.");
+	}
+
+	public static void switchBackToParent(WebDriver driver, String parentWindow) {
+>>>>>>> 9da8f978834d8a72df51ff5d142f17babef96433
 		driver.switchTo().window(parentWindow);
 		System.out.println("↩️ Switched back to parent window.");
 	}
 
+<<<<<<< HEAD
 	// ===== GET CHILD WINDOW HANDLING AND SWITCH TO IT =====
 	public String switchToChildWindow(String parentWindow) {
 		Set<String> allWindows = driver.getWindowHandles();
@@ -171,12 +248,20 @@ public class PublicMethod {
 
 	// ===== ELEMENT LIST UTILS =====
 	public int elementCount(String locator) {
+=======
+	// ===== ELEMENT LIST UTILS =====
+	public static int elementCount(WebDriver driver, String locator) {
+>>>>>>> 9da8f978834d8a72df51ff5d142f17babef96433
 		List<WebElement> elements = driver.findElements(By.xpath(locator));
 		System.out.println("🔢 Found " + elements.size() + " elements for: " + locator);
 		return elements.size();
 	}
 
+<<<<<<< HEAD
 	public String getTextFromListElement(String locator, int index) {
+=======
+	public static String getTextFromListElement(WebDriver driver, String locator, int index) {
+>>>>>>> 9da8f978834d8a72df51ff5d142f17babef96433
 		List<WebElement> elements = driver.findElements(By.xpath(locator));
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOfAllElements(elements));
@@ -190,7 +275,11 @@ public class PublicMethod {
 	}
 
 	// ===== UTILITY CONVERSIONS =====
+<<<<<<< HEAD
 	public int textToInteger(String text) {
+=======
+	public static int textToInteger(String text) {
+>>>>>>> 9da8f978834d8a72df51ff5d142f17babef96433
 		int number = Integer.parseInt(text.replaceAll("[^0-9]", ""));
 		System.out.println("🔢 Converted text to number: " + number);
 		return number;
