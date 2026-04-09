@@ -13,16 +13,29 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import launch.Launch;
+
 public class PublicMethod {
 
+	// 🔹 Step 1: Declare WebDriver (browser instance)
+	// This will be received from Test class (NOT created here)
+	private WebDriver driver;
+
+	// 🔹 Step 2: Constructor Injection
+	// When Login object is created, driver is passed from Test class
+	public PublicMethod(WebDriver driver) {
+		this.driver = driver; // Assign passed driver to class variable
+	}
+
 	// ===== SCREENSHOT =====
-	public static File getScreenshot(WebDriver driver) throws IOException {
+	public File getScreenshot() throws IOException {
 		File screenshotDir = new File("src/test/resources/screenshots");
 		if (!screenshotDir.exists()) {
 			screenshotDir.mkdirs();
@@ -38,36 +51,65 @@ public class PublicMethod {
 		return destination;
 	}
 
+	public WebElement verifyAndGetElement(String xpath) {
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+		try {
+			WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+
+			wait.until(ExpectedConditions.elementToBeClickable(element));
+
+			if (element.isDisplayed() && element.isEnabled()) {
+				System.out.println("✅ Element ready: " + xpath);
+				return element;
+			} else {
+				System.err.println("❌ Element not interactable: " + xpath);
+				return null;
+			}
+
+		} catch (Exception e) {
+			System.err.println("❌ Element not found/visible: " + xpath);
+			return null;
+		}
+	}
+
 	// ===== WAIT METHODS =====
-	public static WebElement waitForElementVisible(WebDriver driver, String locator) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(locator)));
-		//System.out.println("👁️ Element visible: " + locator);
+	public WebElement waitForElementVisible(String locator) throws Throwable {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+		WebElement element = null;
+		try {
+			element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(locator)));
+			Thread.sleep(2000);
+			getScreenshot();
+		} catch (TimeoutException e) {
+			throw new RuntimeException("❌ Element not visible: " + locator);
+		}
 		return element;
 	}
 
-	public static WebElement waitUntilElementClickable(WebDriver driver, String locator) {
+	public WebElement waitUntilElementClickable(String locator) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(locator)));
-		//System.out.println("✅ Element clickable: " + locator);
+		// System.out.println("✅ Element clickable: " + locator);
 		return element;
 	}
 
 	// ===== BASIC ACTIONS =====
-	public static void click(WebDriver driver, String locator) throws IOException {
-		WebElement element = waitUntilElementClickable(driver, locator);
+	public void click(String locator) throws IOException {
+		WebElement element = waitUntilElementClickable(locator);
 		element.click();
-		getScreenshot(driver);
+		getScreenshot();
 		System.out.println("🖱️ Clicked element: " + locator);
 	}
 
-	public static void moveToElement(WebDriver driver, WebElement element) {
+	public void moveToElement(WebElement element) {
 		Actions actions = new Actions(driver);
 		actions.moveToElement(element).perform();
-		//System.out.println("➡️ Moved to element: " + element);
+		// System.out.println("➡️ Moved to element: " + element);
 	}
 
-	public static String getText(WebDriver driver, String locator) {
+	public String getText(String locator) {
 		WebElement element = driver.findElement(By.xpath(locator));
 		String text = element.getText();
 		System.out.println("📄 Text from element: " + text);
@@ -75,28 +117,28 @@ public class PublicMethod {
 	}
 
 	// ===== SLIDER HANDLER =====
-	public static void handleSlider(WebDriver driver, String locator, int slidePixel) throws Exception {
-		WebElement slider = waitForElementVisible(driver, locator);
+	public void handleSlider(String locator, int slidePixel) throws Throwable {
+		WebElement slider = waitForElementVisible(locator);
 		Actions action = new Actions(driver);
 		action.clickAndHold(slider).moveByOffset(slidePixel, 0).release().perform();
-		getScreenshot(driver);
+		getScreenshot();
 		// System.out.println("🎚️ Slider moved by " + slidePixel + " pixels.");
 	}
 
 	// ===== WINDOW HANDLING =====
-	public static String getParentWindow(WebDriver driver) {
+	public String getParentWindow() {
 		String parent = driver.getWindowHandle();
 		System.out.println("🪟 Parent window handle: " + parent);
 		return parent;
 	}
 
-	public static void switchBackToParent(WebDriver driver, String parentWindow) {
+	public void switchBackToParent(String parentWindow) {
 		driver.switchTo().window(parentWindow);
 		System.out.println("↩️ Switched back to parent window.");
 	}
 
 	// ===== GET CHILD WINDOW HANDLING AND SWITCH TO IT =====
-	public static String switchToChildWindow(WebDriver driver, String parentWindow) {
+	public String switchToChildWindow(String parentWindow) {
 		Set<String> allWindows = driver.getWindowHandles();
 		for (String window : allWindows) {
 			// Check if it is not parent window
@@ -111,14 +153,30 @@ public class PublicMethod {
 		return null;
 	}
 
+	// ====== Close Multiple windows if exist except Parent window ======
+	public void closeMultipleWindows(String parentWindow) {
+		Set<String> allWindows = driver.getWindowHandles();
+		for (String window : allWindows) {
+			if (!window.equals(parentWindow)) {
+				try {
+					driver.switchTo().window(window);
+					driver.close();
+				} catch (Exception e) {
+					System.out.println("Error closing window: " + e.getMessage());
+				}
+			}
+		}
+		driver.switchTo().window(parentWindow);
+	}
+
 	// ===== ELEMENT LIST UTILS =====
-	public static int elementCount(WebDriver driver, String locator) {
+	public int elementCount(String locator) {
 		List<WebElement> elements = driver.findElements(By.xpath(locator));
 		System.out.println("🔢 Found " + elements.size() + " elements for: " + locator);
 		return elements.size();
 	}
 
-	public static String getTextFromListElement(WebDriver driver, String locator, int index) {
+	public String getTextFromListElement(String locator, int index) {
 		List<WebElement> elements = driver.findElements(By.xpath(locator));
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOfAllElements(elements));
@@ -132,7 +190,7 @@ public class PublicMethod {
 	}
 
 	// ===== UTILITY CONVERSIONS =====
-	public static int textToInteger(String text) {
+	public int textToInteger(String text) {
 		int number = Integer.parseInt(text.replaceAll("[^0-9]", ""));
 		System.out.println("🔢 Converted text to number: " + number);
 		return number;

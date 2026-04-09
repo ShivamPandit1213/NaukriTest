@@ -3,13 +3,13 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="launch.Launch">
+      <class name="naukriJob.NaukriTest">
         <methods>
-          <include name="launchByBrowserName"/>
-          <include name="exitBrowser"/>
-          <include name="test1"/>
+          <include name="afterMethod"/>
+          <include name="beforeMethod"/>
+          <include name="nokri"/>
         </methods>
-      </class> <!-- launch.Launch -->
+      </class> <!-- naukriJob.NaukriTest -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

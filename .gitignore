@@ -1,1 +1,31 @@
 /target/
+test-output/
+*.log
+*.class
+
+# TestNG Reports
+test-output/
+
+# Driver files
+*.exe
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Ignore TestNG and Maven output
+/test-output/
+/target/
+
+# Ignore IDE specific files
+.settings/
+.classpath
+.project
+.metadata/
+bin/
+
+# Ignore temporary browser profiles
+/temp/

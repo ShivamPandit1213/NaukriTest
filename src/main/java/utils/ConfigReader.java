@@ -18,7 +18,6 @@ public class ConfigReader {
                 properties.load(fis);
                 fis.close();
             } catch (IOException e) {
-                e.printStackTrace();
                 throw new RuntimeException("❌ Failed to load config.properties file. Check the path and file.");
             }
         }

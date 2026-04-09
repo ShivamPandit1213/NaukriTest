@@ -1,47 +1,60 @@
 package launch;
 
 import java.time.Duration;
-import org.openqa.selenium.By;
-// Selenium imports
+import java.util.Set;
+
+import org.openqa.selenium.Cookie;
+import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
 
-import helper.ChatBot;
-// WebDriverManager import (auto-manages driver binaries)
 import io.github.bonigarcia.wdm.WebDriverManager;
-import login.Login;
 import utils.ConfigReader;
 
 public class Launch {
 
-	// WebDriver declared as protected so child classes can use it
-	protected static WebDriver driver;
+	protected WebDriver driver;
 
-	// This method runs before every test method
-	@BeforeMethod
-	@Parameters("browser") // Reads browser name from testng.xml
-	public void launchByBrowserName(@Optional("chrome") String browser) {
+	// ✅ Launch method
+	public WebDriver launchByBrowserName(String browser) {
 
-		// Switch case to launch browser based on parameter
 		switch (browser.toLowerCase()) {
 
 		case "chrome":
-			// Setup ChromeDriver automatically
 			WebDriverManager.chromedriver().setup();
 
-			// Create ChromeDriver instance
-			driver = new ChromeDriver();
+			ChromeOptions options = new ChromeOptions();
+			// Directs all those "data_1" and "lockfile" items to a local temp folder
+//			options.addArguments("--user-data-dir=C:/temp/selenium_profile");
+
+			options.addArguments("--start-maximized");
+			options.addArguments("--disable-notifications");
+			options.addArguments("--disable-infobars");
+			options.addArguments("--disable-extensions");
+			options.addArguments("--remote-allow-origins=*");
+
+			// ⭐ ADD THESE (fix timeout)
+			options.addArguments("--disable-blink-features=AutomationControlled");
+			options.addArguments("--disable-gpu");
+			options.addArguments("--no-sandbox");
+			options.addArguments("--disable-dev-shm-usage");
+
+			// ⭐ Optional but powerful
+			options.addArguments("--dns-prefetch-disable");
+			options.addArguments("--disable-features=NetworkService");
+
+			// stability
+			options.addArguments("--dns-prefetch-disable");
+			options.addArguments("--disable-features=NetworkService");
+
+			// VERY IMPORTANT
+			options.setPageLoadStrategy(PageLoadStrategy.EAGER);
+
+			driver = new ChromeDriver(options);
 			break;
 
 		case "firefox":
@@ -49,51 +62,68 @@ public class Launch {
 			driver = new FirefoxDriver();
 			break;
 
-		case "ie":
-			WebDriverManager.iedriver().setup();
-			driver = new InternetExplorerDriver();
-			break;
-
 		case "edge":
 			WebDriverManager.edgedriver().setup();
 			driver = new EdgeDriver();
 			break;
 
+		case "ie":
+			WebDriverManager.iedriver().setup();
+			driver = new InternetExplorerDriver();
+			break;
+
 		default:
-			// Throw error if browser name is invalid
 			throw new IllegalArgumentException("Browser not supported: " + browser);
 		}
 
-		// Maximize browser window
-		driver.manage().window().maximize();
+		// driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+		driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(20));
+
 		driver.get(ConfigReader.getConfig("naukri.login.url"));
-		// Log which browser was launched
-		System.out.println("🌐 Browser launched: " + browser);
+
+		System.out.println("=== Browser launched: " + browser);
+
+		return driver;
 	}
 
-	@Test
-	public void test1() throws Throwable {
-		Login.nokriLogin(driver);
-		Thread.sleep(1000);
-		String test = ConfigReader.getConfig("naukri.test");
-		driver.navigate().to(test);
+	/**
+	 * ✅ Cookie Management Section
+	 */
 
-		String applyBtn2 = "(//button[text()='Apply'])[1]";
-		// !next.isEmpty() && next.get(0).isDisplayed() && next.get(0).isEnabled()
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		WebElement applyBtn3 = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(applyBtn2)));
-		applyBtn3.click();
-		System.out.println("Apply button is clicked.");
-		
-		ChatBot.chatBot(driver);
+	private void manageInitialCookies() {
+		// Clear existing cookies to start fresh
+		driver.manage().deleteAllCookies();
+		System.out.println("All initial cookies cleared.");
 	}
 
-	// This method runs after every test method
-	@AfterMethod
+	// Method to add a specific cookie (useful for bypassing login if you have a
+	// valid token)
+	public void addCustomCookie(String name, String value) {
+		Cookie customCookie = new Cookie(name, value);
+		driver.manage().addCookie(customCookie);
+		System.out.println("Added cookie: " + name);
+	}
+
+	// Method to print all current cookies to console (for debugging)
+	public void printAllCookies() {
+		Set<Cookie> cookies = driver.manage().getCookies();
+		System.out.println("Current Cookies Count: " + cookies.size());
+		for (Cookie ck : cookies) {
+			System.out.println(
+					String.format("Name: %s | Domain: %s | Expiry: %s", ck.getName(), ck.getDomain(), ck.getExpiry()));
+		}
+	}
+
+	// Method to delete a specific cookie by name
+	public void deleteCookieNamed(String name) {
+		driver.manage().deleteCookieNamed(name);
+	}
+
+	// ✅ Exit method
 	public void exitBrowser() {
-//		 Check if driver is not null before quitting
 		if (driver != null) {
-			driver.quit(); // Close all browser windows
+			driver.quit();
 			System.out.println("✅ Browser closed successfully.");
 		}
 	}

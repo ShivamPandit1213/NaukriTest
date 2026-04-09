@@ -1,52 +1,112 @@
 package login;
 
-import java.io.IOException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import helper.Locator;
 import publicMethod.PublicMethod;
 import utils.ConfigReader;
 import utils.LocatorReader;
 
 public class Login {
 
-	public static void nokriLogin(WebDriver driver) throws IOException, InterruptedException {
+    // 🔹 Step 1: Declare WebDriver (browser instance)
+    // This will be received from Test class (NOT created here)
+    private WebDriver driver;
 
-		String naukriURL = ConfigReader.getConfig("naukri.login.url");
-		driver.get("Naukri.login.url: "+naukriURL);
+    // 🔹 Step 2: Constructor Injection
+    // When Login object is created, driver is passed from Test class
+    public Login(WebDriver driver) {
+        this.driver = driver; // Assign passed driver to class variable
+    }
 
-		// Click on link 'LogIn'
-		String loginLink = LocatorReader.getLocator("loginLink");
-		PublicMethod.waitForElementVisible(driver, loginLink);
-		Locator.callXpathLocator(driver, loginLink).click();
-		// loginPage.click();
-		System.out.println("Login form field is visible.");
+    // 🔹 Step 3: Main Login Method
+    public void nokriLogin() throws Throwable {
 
-		// Enter on Email
-		String emailLocator = LocatorReader.getLocator("emailLocator");
-		WebElement email = PublicMethod.waitUntilElementClickable(driver, emailLocator);
-		String user = ConfigReader.getConfig("naukri.user");
-		email.sendKeys(user);
-		System.out.println("Entered Email Id: " + user);
+        // 🔹 Step 4: Create object of reusable methods class
+        // Used for waits, screenshots, etc.
+        PublicMethod callCustomMethod = new PublicMethod(driver);
 
-		// Enter on Password
-		String passLocator = LocatorReader.getLocator("passLocator");
-		WebElement passElement = driver.findElement(By.xpath(passLocator));
-		String pass = ConfigReader.getConfig("naukri.password");
-		passElement.sendKeys(pass);
-		System.out.println("Entered Password: " + pass);
+        // 🔹 Step 5: Get URL from config.properties
+        // Example: naukri.login.url=https://www.naukri.com
+        String naukriURL = ConfigReader.getConfig("naukri.login.url");
 
-		// Capture screenshot while credentials filled
-		Thread.sleep(3000);
-		PublicMethod.getScreenshot(driver);
+        // 🔹 Step 6: Open the URL in browser
+        driver.get(naukriURL);
 
-		// Click on button 'LogIn' via Submit submitLogin
-		String submitLogin = LocatorReader.getLocator("submitLogin");
-		WebElement submitBtn = Locator.callXpathLocator(driver, submitLogin);
-		submitBtn.click();
-		System.out.println("Clicked on button 'LogIn' & Login successful");
-		System.out.println("===================================================");
-	}
+        // =========================================================
+
+        // 🔹 Step 7: Click on Login link
+
+        // Get locator from locator file
+        String loginLink = LocatorReader.getLocator("loginLink");
+
+        // Wait until element is visible
+        WebElement wb = callCustomMethod.waitForElementVisible(loginLink);
+
+        // Click on Login link
+        wb.click();
+
+        System.out.println("Login form field is visible.");
+
+        // =========================================================
+
+        // 🔹 Step 8: Enter Email
+
+        // Get email locator
+        String emailLocator = LocatorReader.getLocator("emailLocator");
+
+        // Wait until element is clickable
+        WebElement email = callCustomMethod.waitUntilElementClickable(emailLocator);
+
+        // Get username from config file
+        String user = ConfigReader.getConfig("naukri.user");
+
+        // Enter username
+        email.sendKeys(user);
+
+        System.out.println("Entered Email Id: " + user);
+
+        // =========================================================
+
+        // 🔹 Step 9: Enter Password
+
+        // Get password locator
+        String passLocator = LocatorReader.getLocator("passLocator");
+
+        // Find password field using driver
+        WebElement passElement = driver.findElement(By.xpath(passLocator));
+
+        // Get password from config file
+        String pass = ConfigReader.getConfig("naukri.password");
+
+        // Enter password
+        passElement.sendKeys(pass);
+
+        System.out.println("Entered Password: " + pass);
+
+        // =========================================================
+
+        // 🔹 Step 10: Take Screenshot (after entering credentials)
+        Thread.sleep(3000); // ⚠️ Not recommended in real framework
+        callCustomMethod.getScreenshot();
+
+        // =========================================================
+
+        // 🔹 Step 11: Click Login button
+
+        // Get submit button locator
+        String submitLogin = LocatorReader.getLocator("submitLogin");
+
+        // Find element
+        WebElement submitBtn = driver.findElement(By.xpath(submitLogin));
+
+        // Click Login button
+        submitBtn.click();
+
+        System.out.println("Clicked on Login button");
+        System.out.println("Login successful");
+
+        // =========================================================
+    }
 }
