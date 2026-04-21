@@ -59,7 +59,7 @@ public class NaukriTest extends TestNG_Annotations {
 
 		// ================= STEP 2: LOGIN =================
 		Login callLoging = new Login(driver);
-		callLoging.nokriLogin();
+		callLoging.naukriLogin();
 		
 		// Wait for the dashboard to load after login
 		Thread.sleep(4000);
