@@ -3,9 +3,9 @@
 
 <suite name="NokriJobSuite">
   <test name="Run on Chrome">
-    <parameter name="browser" value="chrome"/>   <!-- ✅ Required -->
+    <parameter name="browser" value="chrome"/>   
     <classes>
-      <class name="nokrijob.apply.NokriDotCom"/>
+      <class name="nokrijob.NokriDotCom"/>
     </classes>
   </test>
 </suite>
