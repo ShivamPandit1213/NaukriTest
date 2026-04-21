@@ -14,18 +14,11 @@ public class ConfigReader {
         if (properties == null) {
             properties = new Properties();
             try {
-<<<<<<< HEAD
                 FileInputStream fis = new FileInputStream("src/main/resources/config.properties");
                 properties.load(fis);
                 fis.close();
             } catch (IOException e) {
-=======
-                FileInputStream fis = new FileInputStream("src/test/resources/config.properties");
-                properties.load(fis);
-                fis.close();
-            } catch (IOException e) {
                 e.printStackTrace();
->>>>>>> 9da8f978834d8a72df51ff5d142f17babef96433
                 throw new RuntimeException("❌ Failed to load config.properties file. Check the path and file.");
             }
         }
@@ -36,11 +29,7 @@ public class ConfigReader {
      * @param key The property key
      * @return The property value as a String
      */
-<<<<<<< HEAD
     public static String getConfig(String key) {
-=======
-    public static String get(String key) {
->>>>>>> 9da8f978834d8a72df51ff5d142f17babef96433
         loadProperties();
         String value = properties.getProperty(key);
         if (value == null) {
