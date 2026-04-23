@@ -4,7 +4,7 @@ import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
 import login.Login;
-import publicmethod.PublicMethod;
+import publicMethod.PublicMethod;
 import testng_frame.TestNG_Annotations;
 import utils.LocatorReader;
 
