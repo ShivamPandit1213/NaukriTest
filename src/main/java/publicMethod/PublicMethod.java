@@ -1,4 +1,4 @@
-package publicMethod;
+package publicmethod;
 
 // [SOURCE: Standard Java Libraries]
 import java.io.File;
