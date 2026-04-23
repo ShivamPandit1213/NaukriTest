@@ -1,4 +1,4 @@
-package naukrijob;
+package naukriJob;
 
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
