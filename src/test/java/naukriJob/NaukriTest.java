@@ -66,7 +66,8 @@ public class NaukriTest extends TestNG_Annotations {
 
 		// ================= STEP 3: SEARCH =================
 		Thread.sleep(8000);
-		callCustomMethod.click("//span[text()='Search jobs here']/following-sibling::button");
+		// NaukriTest.java, line 69
+		callCustomMethod.click("//button[@aria-label='Search jobs here']");
 
 		WebElement keyword = wait.until(ExpectedConditions.visibilityOfElementLocated(
 				By.xpath("//input[@placeholder='Enter keyword / designation / companies']")));
