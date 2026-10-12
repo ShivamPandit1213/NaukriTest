@@ -20,7 +20,11 @@ public class UploadCV extends TestNG_Annotations {
 		driver.findElement(By.xpath(profile)).click();
 
 		String uploadCV = LocatorReader.getLocator("uploadCV");
-		callMethod.waitForElementPresence(uploadCV);
+		
+		// UploadCV.java – replace the 3 "profile" lines with:
+		driver.get("https://www.naukri.com/mnjuser/profile");
+		new WebDriverWait(driver, Duration.ofSeconds(20)).until(ExpectedConditions.urlContains("/mnjuser/profile"));
+		
 		// Selenium's file upload mechanism strictly requires an absolute path (e.g., C:\Users\Name\Project\src\...)
 		String fileLocation = "C:\\Users\\shiva\\OneDrive\\Documents\\ShivamCV_Automation.pdf";
 		callMethod.uploadAnyFile(uploadCV, fileLocation);
